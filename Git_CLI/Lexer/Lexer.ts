@@ -94,7 +94,7 @@ export class Lexer{
         return Lexer.SymbolMap.has(Test);
     }
     private CheckIfChar(Test : string) : boolean{
-        return (/^[a-zA-Z]$/.test(Test));
+        return (/^[a-zA-Z]$/.test(Test)) || Test.includes('_');
     }
     private CheckIfNumber(Test : string) : boolean{
         if(Test >= '0' && Test <= '9'){
@@ -156,79 +156,97 @@ export class Lexer{
             return new TokenModel(Tokens.STRING, value, startPos);
         }
         else if (currentChar === '$') {
-    const startPos = this._TextPosition;
-    const n1 = this.Peek(1);
-    const n2 = this.Peek(2);
+            const startPos = this._TextPosition;
+            const n1 = this.Peek(1);
+            const n2 = this.Peek(2);
 
-    // arithmetic: $(( ... ))
-    if (n1 === '(' && n2 === '(') {
-        let value = "$((";
-        this.MovePtr(1); this.MovePtr(1); this.MovePtr(1); // consume $ and two (
-        let depth = 1;
-        let ch = this.Peek(0);
-        while (ch !== '\0') {
-            if (ch === '(') { depth++; value += this.MovePtr(1); }
-            else if (ch === ')') {
-                // consume one ) and check if final ) follows
-                value += this.MovePtr(1);
-                if (this.Peek(0) === ')') { value += this.MovePtr(1); depth--; if (depth === 0) break; }
-                else { depth--; }
-            } else { value += this.MovePtr(1); }
-            ch = this.Peek(0);
-        }
-        return new TokenModel(Tokens.ARITHMETIC, value, startPos);
-    }
-
-    // braced: ${ ... }
-    if (n1 === '{') {
-        let value = "$";
-        value += this.MovePtr(1); // consume $
-        value += this.MovePtr(1); // consume {
-        let depth = 1;
-        let ch = this.Peek(0);
-        while (ch !== '\0') {
-            if (ch === '{') { depth++; value += this.MovePtr(1); }
-            else if (ch === '}') { value += this.MovePtr(1); depth--; if (depth === 0) break; }
-            else { value += this.MovePtr(1); }
-            ch = this.Peek(0);
-        }
-        return new TokenModel(Tokens.VARIABLE_BRACED, value, startPos);
-    }
-
-        // command substitution: $( ... )
-        if (n1 === '(') {
-            let value = "$";
-            value += this.MovePtr(1); // consume $
-            value += this.MovePtr(1); // consume (
-            let depth = 1;
-            let ch = this.Peek(0);
-            while (ch !== '\0') {
-                if (ch === '(') { depth++; value += this.MovePtr(1); }
-                else if (ch === ')') { value += this.MovePtr(1); depth--; if (depth === 0) break; }
-                else { value += this.MovePtr(1); }
-                ch = this.Peek(0);
+            // arithmetic: $(( ... ))
+            if (n1 === '(' && n2 === '(') {
+                let value = "$((";
+                this.MovePtr(1); this.MovePtr(1); this.MovePtr(1); // consume $ and two (
+                let depth = 1;
+                let ch = this.Peek(0);
+                while (ch !== '\0') {
+                    if (ch === '(') { 
+                        depth++; value += this.MovePtr(1); 
+                    }
+                    else if (ch === ')') {
+                        // consume one ) and check if final ) follows
+                        value += this.MovePtr(1);
+                        if (this.Peek(0) === ')') { value += this.MovePtr(1); depth--; if (depth === 0) break; }
+                        else { 
+                            depth--; 
+                        }
+                    } else { 
+                        value += this.MovePtr(1); 
+                    }
+                    ch = this.Peek(0);
+                }
+                return new TokenModel(Tokens.ARITHMETIC, value, startPos);
             }
-            return new TokenModel(Tokens.COMMAND_SUB, value, startPos);
-        }
 
-        // plain $name / special params
-        this.MovePtr(1); // consume $
-        let value = "$";
-        let ch = this.Peek(0);
-        if (ch === '\0') return new TokenModel(Tokens.VARIABLE, value, startPos);
-        if (['#','?','*','@','-','$','!'].includes(ch) || (ch >= '0' && ch <= '9')) {
-            value += this.MovePtr(1);
-            return new TokenModel(Tokens.VARIABLE, value, startPos);
-        }
-        if (/^[A-Za-z_]$/.test(ch)) {
-            value += this.MovePtr(1);
-            ch = this.Peek(0);
-            while (/^[A-Za-z0-9_]$/.test(ch)) { value += this.MovePtr(1); ch = this.Peek(0); }
-            return new TokenModel(Tokens.VARIABLE, value, startPos);
-        }
+            // braced: ${ ... }
+            if (n1 === '{') {
+                let value = "$";
+                value += this.MovePtr(1); // consume $
+                value += this.MovePtr(1); // consume {
+                let depth = 1;
+                let ch = this.Peek(0);
+                while (ch !== '\0') {
+                    if (ch === '{') 
+                    { 
+                        depth++; value += this.MovePtr(1); 
+                    }
+                    else if (ch === '}') 
+                    { 
+                        value += this.MovePtr(1); depth--; if (depth === 0) 
+                        break;
+                    }
+                    else { 
+                        value += this.MovePtr(1); 
+                    }
+                    ch = this.Peek(0);
+                }
+                return new TokenModel(Tokens.VARIABLE_BRACED, value, startPos);
+            }
 
-        return new TokenModel(Tokens.UNKNOWN_TOKEN, value, startPos);
-    }
+            // command substitution: $( ... )
+            if (n1 === '(') {
+                let value = "$";
+                value += this.MovePtr(1); // consume $
+                value += this.MovePtr(1); // consume (
+                let depth = 1;
+                let ch = this.Peek(0);
+                while (ch !== '\0') {
+                    if (ch === '(') { depth++; value += this.MovePtr(1); }
+                    else if (ch === ')') { value += this.MovePtr(1); depth--; if (depth === 0) break; }
+                    else { value += this.MovePtr(1); }
+                    ch = this.Peek(0);
+                }
+                return new TokenModel(Tokens.COMMAND_SUB, value, startPos);
+            }
+
+            // plain $name / special params
+            this.MovePtr(1); // consume $
+            let value = "$";
+            let ch = this.Peek(0);
+            if (ch === '\0') return new TokenModel(Tokens.VARIABLE, value, startPos);
+            if (['#','?','*','@','-','$','!'].includes(ch) || (ch >= '0' && ch <= '9')) {
+                value += this.MovePtr(1);
+                return new TokenModel(Tokens.VARIABLE, value, startPos);
+            }
+            if (/^[A-Za-z_]$/.test(ch)) {
+                value += this.MovePtr(1);
+                ch = this.Peek(0);
+                while (/^[A-Za-z0-9_]$/.test(ch)) 
+                { 
+                    value += this.MovePtr(1); ch = this.Peek(0); 
+                }
+                return new TokenModel(Tokens.VARIABLE, value, startPos);
+            }
+
+            return new TokenModel(Tokens.UNKNOWN_TOKEN, value, startPos);
+        }
 
         else if(this.CheckIfSymbol(currentChar)){
             const startPos = this._TextPosition;
