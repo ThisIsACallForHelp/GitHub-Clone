@@ -10,6 +10,7 @@ export interface FileChange{
     path : string,
     action : changeType,
     contentHash? : string
+    mtime?: number
 }
 
 export interface Snapshot{
