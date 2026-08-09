@@ -1,0 +1,24 @@
+import {createHash} from 'crypto';
+import {createReadStream} from 'fs';
+
+export function GetHashedContent(filePath: string) : Promise<string>
+{
+    return new Promise((resolve, reject) => {
+    const hash = createHash('sha256');
+    const stream = createReadStream(filePath);
+
+    stream.on('data', (chunk : string) => {
+    hash.update(chunk);});
+
+    stream.on('end', () => 
+    {
+        resolve(hash.digest('hex'));
+    })
+
+    stream.on('error', (err : Error) => 
+    {
+        reject(err);
+    })
+
+    });
+}
