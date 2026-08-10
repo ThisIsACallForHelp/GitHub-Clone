@@ -57,8 +57,23 @@ export function GetSnapshotChain(lastSnapshot : Snapshot) : Snapshot[]
     return chain;
 }
 
-export function RestoreLastSnapshot(lastSnapshot : Snapshot)
+export async function RestoreLastSnapshot(lastSnapshot : Snapshot)
 {
     const chain = GetSnapshotChain(lastSnapshot);
-
+    for(const snapshot of chain)
+    {
+        for (const change of snapshot.changes)
+        {
+            switch(change.action)
+            {
+                case changeType.DELETED:
+                    await unlink(change.path);
+                    break;
+                default:
+                    const data = await mockGetBlob(change.contentHash!);
+                    await writeFile(change.path, data);
+                    break;
+            }
+        }
+    }
 }
