@@ -1,4 +1,4 @@
-class ASTNode{
+export class ASTNode{
     public LineNumber : number = 0;
     public TokenNumber : number = 0;
     public ProblemString : string = "";
