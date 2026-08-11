@@ -57,6 +57,21 @@ export class Expander
         }
         return tokens;
     }
+    private VariablesExpander(tokens : TokenModel[])
+    {
+        for(let i = 0; i < tokens.length; ++i)
+        {
+            if(tokens[i].TokenType == Tokens.VARIABLE || tokens[i].TokenType == Tokens.VARIABLE_BRACED)
+            {
+                if(tokens[i].TokenValue.startsWith('$'))
+                {
+                    tokens[i].TokenValue = tokens[i].TokenValue.substring(1);
+                }
+                tokens[i].TokenValue = this.env.getVariable(tokens[i].TokenValue) || "";
+            }
+        }
+        return tokens;
+    }
     public expand(tokens: TokenModel[])
     {
         //p1
@@ -64,6 +79,8 @@ export class Expander
         //p2
         const tildeExpanded = this.TildeExpander(braceExpanded);
         //p3
-        
+        const variablesExpanded = this.VariablesExpander(tildeExpanded);
+        //p4
+        return variablesExpanded;
     }
 }
