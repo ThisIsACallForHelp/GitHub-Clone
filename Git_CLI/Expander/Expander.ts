@@ -1,5 +1,6 @@
 import { Tokens } from '../Lexer/LexerTokens.ts';
 import {TokenModel} from '../Lexer/TokenModel.ts'
+const DEFAULT_HOME_PATH : string = "/home/user";
 //a temporary class
 export class Environment {
     // A private Map to hold variable names and their string values
@@ -17,10 +18,10 @@ export class Environment {
 export class Expander
 {
     constructor(private env: Environment){}
-    public expand(tokens: TokenModel[])
+    private BraceExpansion(tokens: TokenModel[])
     {
         let ExpandedTokens : TokenModel[] = [];
-        for(let i = 0; i < tokens.length; i++)
+        for(let i = 0; i < tokens.length; ++i)
         {
             const tokenVal = tokens[i].TokenValue;
             const openIndex = tokenVal.indexOf("{");
@@ -43,5 +44,26 @@ export class Expander
             })
         }
         return ExpandedTokens;
+    }
+    private TildeExpander(tokens: TokenModel[])
+    {
+        for(let i = 0; i < tokens.length; ++i)
+        {
+            if(tokens[i].TokenValue.startsWith('~'))
+            {
+                let path : string = this.env.getVariable("HOME") || DEFAULT_HOME_PATH;
+                tokens[i].TokenValue = path + tokens[i].TokenValue.substring(1);
+            }
+        }
+        return tokens;
+    }
+    public expand(tokens: TokenModel[])
+    {
+        //p1
+        const braceExpanded = this.BraceExpansion(tokens);
+        //p2
+        const tildeExpanded = this.TildeExpander(braceExpanded);
+        //p3
+        
     }
 }
