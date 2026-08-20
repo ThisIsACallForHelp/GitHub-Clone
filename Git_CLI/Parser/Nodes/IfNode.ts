@@ -18,19 +18,5 @@ export class IfNode extends Statement{
         this.condition = Condition;
         this.thenBody = ThenBody;
         this.elseChain = ElseChain;
-        const conditionResult = this.evaluate(node.condition);
-        if(conditionResult === 0)
-        {
-            for(let cmd of node.thenBody.commands)
-            {
-                this.evaluate(cmd);
-            }
-        }
-        else{
-            if(node.elseChain !== null)
-            {
-                this.visitIfNode(node.elseChain);
-            }
-        }
     }
 }

@@ -46,7 +46,6 @@ export class Evaluator
                 this.visitIfNode(node.elseChain);
             }
         }
-        
         return 0;
     }
     public evaluate(node: ASTNode)
