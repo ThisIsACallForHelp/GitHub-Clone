@@ -1,10 +1,14 @@
+import { Tokens } from "../../Lexer/LexerTokens";
+
 export class ASTNode{
-    public LineNumber : number = 0;
-    public TokenNumber : number = 0;
-    public ProblemString : string = "";
-    constructor(Line : number, Token : number, Problem : string){
-        this.LineNumber = Line;
-        this.TokenNumber = Token;
-        this.ProblemString = Problem;
+    public lineNumber : number = 0;
+    public Token : Tokens;
+    public ErrorVal : string = "";
+    constructor(Line : number, Token : Tokens, 
+                tVal : string)
+    {
+        this.lineNumber = Line;
+        this.Token = Token;
+        this.ErrorVal = tVal;
     }
 }

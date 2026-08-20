@@ -1,14 +1,18 @@
 import {Tokens} from "../../Lexer/LexerTokens";
 import {Expression} from "./Expression";
+import { ASTNode } from "./ASTNode";
 export class AssignmentNode extends ASTNode{
-    public VariableName : string;
-    public EqualsToken : Tokens;
-    public Expression : Expression;
-    public constructor(Line : number , Token : number, Problem : string, VariableName: string, EqualsToken: Tokens, Expression: Expression){
+    public variableName : string;
+    public equalsToken : Tokens;
+    public expression : Expression;
+    public constructor(Line : number , Token : Tokens, 
+                       Problem : string, VariableName: string,
+                       EqualsToken: Tokens, Expression: Expression)
+    {
         super(Line, Token, Problem);
-        this.VariableName = VariableName;
-        this.EqualsToken = EqualsToken;
-        this.Expression = Expression;
+        this.variableName = VariableName;
+        this.equalsToken = EqualsToken;
+        this.expression = Expression;
     }
 
 }

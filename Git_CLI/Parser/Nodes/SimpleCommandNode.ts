@@ -1,12 +1,19 @@
 import { Statement } from "./Statement";
-
+import { RedirectionsNode } from "./RedirectionsNode";
+import { Tokens } from "../../Lexer/LexerTokens";
+import { ArgumentNode } from "./ArgumentNode";
 export class SimpleCommandNode extends Statement{
-    public commandName: string;
-    public args: string[];
-    public constructor(cName: string, argArr: string[], line: number, tokenNum: number, problem: string) 
+    public command : string;
+    public args : ArgumentNode[]
+    public redirectors : RedirectionsNode[];
+
+    public constructor(Line : number , Token : Tokens, 
+                       Problem : string, command: string, 
+                       args: ArgumentNode[], redirectors: RedirectionsNode[])
     {
-        super(line, tokenNum, problem);
-        this.commandName = cName;
-        this.args = argArr;
+        super(Line, Token, Problem);
+        this.command = command;
+        this.args = args;
+        this.redirectors = redirectors;
     }
 }
