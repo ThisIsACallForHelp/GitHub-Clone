@@ -1,14 +1,18 @@
 import { Statement } from "./Statement";
 import { CommandListNode } from "./CommandListNode";
+import { Tokens } from "../../Lexer/LexerTokens";
 export class FunctionNode extends Statement{
-    public FuncName : string;
-    public FuncParams : CommandListNode | null;
-    public FuncBody : CommandListNode | null;
-    public constructor(Line : number , Token : number, Problem : string, FuncName: string, FuncParams: CommandListNode | null, FuncBody: CommandListNode | null){
+    public funcName : string;
+    public funcParams : CommandListNode | null;
+    public funcBody : CommandListNode | null;
+    public constructor(Line : number , Token : Tokens, 
+                       Problem : string, FuncName: string, 
+                       FuncParams: CommandListNode | null, 
+                       FuncBody: CommandListNode | null){
         super(Line, Token, Problem);
-        this.FuncName = FuncName;
-        this.FuncParams = FuncParams;
-        this.FuncBody = FuncBody;
+        this.funcName = FuncName;
+        this.funcParams = FuncParams;
+        this.funcBody = FuncBody;
     }
 
 }
