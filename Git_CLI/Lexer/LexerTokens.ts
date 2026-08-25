@@ -10,14 +10,25 @@ export enum Tokens{
     VARIABLE_BRACED,
     COMMAND_SUB,
     COMMAND_SUB_BACKTICK,
+    END_DOLLAR_COMMAND_SUB,
     ARITHMETIC,
+    END_ARITHMETIC,
 
     //Operators
+    PLUS_PLUS,
+    PLUS_EQUALS,
+    MINUS_MINUS,
+    MINUS_EQUALS,
+    ASTRIX_EQUALS,
+    SLASH_EQUALS,
     PIPE,
     PIPE_AND,
     AND,
+    AND_EQUALS,
     OR,
+    OR_EQUALS,
     NOT,
+    NOT_EQUALS,
     SEMICOLON,
     DOUBLE_SEMICOLON,
     BACKGROUND,
@@ -25,7 +36,15 @@ export enum Tokens{
     DOUBLE_OPEN_SQUARED, //[[
     DOUBLE_CLOSE_SQUARED, //]]
     COMMENT, //#
-    
+    OPEN_BRACE,
+    OPEN_PARENTHESIS,
+    CLOSE_BRACE,
+    CLOSE_PARENTHESIS,
+    EQUALS,
+    ERROR_FALLBACK,
+    ASSIGN_FALLBACK,
+    DEFAULT_FALLBACK,
+    ALTERNATE_FALLBACK,
 
     //Redirectors
     REDIRECT_OUT,
@@ -43,6 +62,7 @@ export enum Tokens{
     //Grouping
     OPEN_SUBSHELL,
     CLOSE_SUBSHELL,
+    END_COMMAND_SUB,
     OPEN_COMMAND_GROUP,
     CLOSE_COMMAND_GROUP,
 
@@ -80,6 +100,7 @@ export enum Tokens{
     UNALIAS,
     TIME,
     COPROC,
-
+    PROGRAM_TOKEN,
+    ARGUMENT_RECOGNISER,
     UNKNOWN_TOKEN //i will use this for errors 
 }
