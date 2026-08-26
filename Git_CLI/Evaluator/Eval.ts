@@ -3,11 +3,12 @@ import {SimpleCommandNode} from '../Parser/Nodes/SimpleCommandNode.ts';
 import {PipelineNode} from '../Parser/Nodes/PipelineNode.ts'
 import {spawnSync} from 'child_process';
 import { IfNode } from '../Parser/Nodes/IfNode.ts';
+import { CommandListNode } from '../Parser/Nodes/CommandListNode.ts';
 export class Evaluator
 {
     private visitSimpleCommandNode(node: SimpleCommandNode) 
     {
-        return spawnSync(node.command,node.args.map(arg => arg.raw),{stdio:'inherit'}).status;
+        return spawnSync(node.commandName,node.args.map(arg => arg.parts),{stdio:'inherit'}).status;
     }
     private visitPipelineNode(node: PipelineNode) 
     { 
@@ -17,7 +18,7 @@ export class Evaluator
             if(command instanceof SimpleCommandNode)
             {
                 const simple = command as SimpleCommandNode;
-                const res : any= spawnSync(simple.command, simple.args.map(arg => arg.raw), {input: temp});
+                const res : any= spawnSync(simple.args, simple.args.map(arg => arg.parts), {input: temp});
                 temp = res.stdout;
             }
         }
@@ -41,9 +42,14 @@ export class Evaluator
         }
         else 
         {
-            if (node.elseChain !== null)
+            if (node.elseChain instanceof IfNode && node.elseChain !== null)
             {
                 this.visitIfNode(node.elseChain);
+            }
+        }
+        if(node.elseChain instanceof CommandListNode && node.elseChain !== null){
+            for(let cmd of node.elseChain.commands){
+                this.evaluate(cmd);
             }
         }
         return 0;
