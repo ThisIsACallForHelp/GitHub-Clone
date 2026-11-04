@@ -1,5 +1,5 @@
-import { Tokens } from "../../Lexer/LexerTokens";
-import { Expression } from "./Expression";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { Expression } from "./Expression.ts";
 
 export class VariableBracedNode extends Expression{
     public name : string;

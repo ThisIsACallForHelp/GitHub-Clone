@@ -1,4 +1,4 @@
-import { Tokens } from "../../Lexer/LexerTokens";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
 
 export class ASTNode{
     public lineNumber : number = 0;

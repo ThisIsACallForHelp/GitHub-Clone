@@ -1,5 +1,5 @@
-import { Expression } from "./Expression";
-import { Tokens } from "../../Lexer/LexerTokens";
+import { Expression } from "./Expression.ts";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
 export class StringNode extends Expression{
     public content : string;
     public constructor(Content : string, line : number, 

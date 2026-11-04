@@ -1,4 +1,4 @@
-import { Statement } from "./Statement";
+import { Statement } from "./Statement.ts";
 import { Tokens} from "../../Lexer/LexerTokens.ts"
 import {Expression} from "./Expression.ts"
 export class RedirectionsNode extends Statement{

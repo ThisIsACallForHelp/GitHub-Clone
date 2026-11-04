@@ -1,6 +1,6 @@
-import {Tokens} from "../../Lexer/LexerTokens";
-import {Expression} from "./Expression";
-import { ASTNode } from "./ASTNode";
+import {Tokens} from "../../Lexer/LexerTokens.ts";
+import {Expression} from "./Expression.ts";
+import { ASTNode } from "./ASTNode.ts";
 export class AssignmentNode extends ASTNode{
     public variableName : string;
     public equalsToken : Tokens;

@@ -1,7 +1,7 @@
-import { Tokens } from "../../Lexer/LexerTokens";
-import { CommandListNode } from "./CommandListNode";
-import { Expression } from "./Expression";
-import { Statement } from "./Statement";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { CommandListNode } from "./CommandListNode.ts";
+import { Expression } from "./Expression.ts";
+import { Statement } from "./Statement.ts";
 
 export class UntilNode extends Statement{
     public condition : Expression | null;

@@ -1,6 +1,6 @@
-import { Tokens } from "../../Lexer/LexerTokens";
-import { CommandListNode } from "./CommandListNode";
-import { Statement } from "./Statement";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { CommandListNode } from "./CommandListNode.ts";
+import { Statement } from "./Statement.ts";
 
 export class CommandGroupNode extends Statement{
     public commands : CommandListNode;

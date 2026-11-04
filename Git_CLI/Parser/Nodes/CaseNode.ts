@@ -1,7 +1,7 @@
-import { Tokens } from "../../Lexer/LexerTokens";
-import { CaseArmNode } from "./CaseArmNode";
-import { Expression } from "./Expression";
-import { Statement } from "./Statement";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { CaseArmNode } from "./CaseArmNode.ts";
+import { Expression } from "./Expression.ts";
+import { Statement } from "./Statement.ts";
 
 export class CaseNode extends Statement{
     public testedExpression : Expression;

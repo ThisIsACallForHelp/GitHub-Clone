@@ -1,7 +1,7 @@
-import { Expression } from "./Expression";
-import { ProgramNode } from "./ProgramNode";
-import { CommandListNode } from "./CommandListNode";
-import { Tokens } from "../../Lexer/LexerTokens";
+import { Expression } from "./Expression.ts";
+import { ProgramNode } from "./ProgramNode.ts";
+import { CommandListNode } from "./CommandListNode.ts";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
 export class CommandSubNode extends Expression{
     inner : ProgramNode | CommandListNode;
     public constructor(Line : number , Token : Tokens, 

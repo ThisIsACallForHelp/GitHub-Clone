@@ -1,4 +1,4 @@
-import {Tokens} from "./LexerTokens";
+import {Tokens} from "./LexerTokens.ts";
 export class TokenModel{
     public TokenType : Tokens;
     public TokenValue : string;

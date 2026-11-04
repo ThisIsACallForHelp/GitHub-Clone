@@ -1,7 +1,7 @@
-import { Statement } from "./Statement";
-import {Expression} from "./Expression";
-import { Tokens} from "../../Lexer/LexerTokens";
-import { CommandListNode } from "./CommandListNode";
+import { Statement } from "./Statement.ts";
+import {Expression} from "./Expression.ts";
+import { Tokens} from "../../Lexer/LexerTokens.ts";
+import { CommandListNode } from "./CommandListNode.ts";
 export class WhileNode extends Statement{
     public whileToken : Tokens;
     public condition : Expression | null;

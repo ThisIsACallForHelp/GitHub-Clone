@@ -1,6 +1,6 @@
-import { Tokens } from "../../Lexer/LexerTokens";
-import { ASTNode } from "./ASTNode";
-import {Expression} from "./Expression";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { ASTNode } from "./ASTNode.ts";
+import {Expression} from "./Expression.ts";
 
 export class ArithmeticNode extends Expression{
     innerExp: Expression;

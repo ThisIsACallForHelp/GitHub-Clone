@@ -1,7 +1,7 @@
 
-import { CommandListNode } from "./CommandListNode";
-import { ASTNode } from "./ASTNode";
-import { Tokens } from "../../Lexer/LexerTokens";
+import { CommandListNode } from "./CommandListNode.ts";
+import { ASTNode } from "./ASTNode.ts";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
 export class ProgramNode extends ASTNode{
     public code : CommandListNode;
     public constructor(Line : number , Token : Tokens, 

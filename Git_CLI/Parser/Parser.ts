@@ -1,4 +1,4 @@
-import {TokenModel } from "../Lexer/TokenModel";
+import {TokenModel } from "../Lexer/TokenModel.ts";
 import { ProgramNode } from "./Nodes/ProgramNode.ts";
 import { CommandGroupNode } from "./Nodes/CommandGroupNode.ts";
 import { Expression } from "./Nodes/Expression.ts";
@@ -38,7 +38,7 @@ export class Parser{
             return null;
         }
         this._position += (movePointer) ? offset : 0;
-        return this.lexerTokens[(movePointer) ? this._position : this._position + offset];
+        return this.lexerTokens[(movePointer) ? this._position! : this._position + offset]!;
     }
     MatchAndMove(expectedToken : Tokens){
         const prevToken = this.lexerTokens[this._position];
@@ -51,12 +51,13 @@ export class Parser{
     advance() : Tokens | null
     {
         if(!this.lexerTokens[this._position+1] ||
-            this.lexerTokens[this._position+1].TokenType === Tokens.EOF
+            (this.lexerTokens[this._position+1] && 
+            this.lexerTokens[this._position+1]!.TokenType === Tokens.EOF)
         ){
             return null;
         }
         this._position++;
-        return this.lexerTokens[this._position].TokenType;
+        return this.lexerTokens[this._position]!.TokenType;
     }
     parseStatement() : Statement | null{
         let currentToken = this.getSpecificToken(0);
@@ -206,7 +207,7 @@ export class Parser{
             this.MatchAndMove(Tokens.DOUBLE_SEMICOLON);
             let newArm = new CaseArmNode(0,Tokens.CASE,"",patterns,body, null);
             if(arms.length > 0){
-                arms[arms.length - 1].next = newArm;
+                arms[arms.length - 1]!.next = newArm;
             }
             arms.push(newArm);
             peeked = this.getSpecificToken(0,false);

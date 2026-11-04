@@ -1,4 +1,4 @@
-import {Expression} from "./Expression";
+import {Expression} from "./Expression.ts";
 import {Tokens} from "../../Lexer/LexerTokens.ts"
 export class LogicalExpressionNode extends Expression{
     public left : Expression;

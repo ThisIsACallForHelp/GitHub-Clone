@@ -1,5 +1,5 @@
-import { Tokens } from "./LexerTokens";
-import { TokenModel } from "./TokenModel";
+import { Tokens } from "./LexerTokens.ts";
+import { TokenModel } from "./TokenModel.ts";
 export class Lexer{
     private static readonly KeywordMap = new Map<string, Tokens>([
         ["if", Tokens.IF],
@@ -91,14 +91,14 @@ export class Lexer{
         if(this._TextPosition + Pos >= this.Text.length){
             return '\0';
         }
-        return this.Text[this._TextPosition + Pos];
+        return this.Text[this._TextPosition + Pos]!;
     }
     public MovePtr(Offset : number) : string{
         if(this._TextPosition + Offset >= this.Text.length){
             return '\0'; 
         }
         this._TextPosition += Offset; //increment the position by the offset 
-        return this.Text[this._TextPosition]; //return the next char and increment the position 
+        return this.Text[this._TextPosition]!; //return the next char and increment the position 
     }
 
     private CheckIfSymbol(Test: string ) : boolean{
