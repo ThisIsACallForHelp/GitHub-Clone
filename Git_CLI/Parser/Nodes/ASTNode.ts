@@ -1,14 +1,9 @@
-import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { TokenModel } from "../../Lexer/TokenModel.ts";
 
 export class ASTNode{
-    public lineNumber : number = 0;
-    public Token : Tokens;
-    public ErrorVal : string = "";
-    constructor(Line : number, Token : Tokens, 
-                tVal : string)
+    public astToken : TokenModel;
+    constructor(token : TokenModel)
     {
-        this.lineNumber = Line;
-        this.Token = Token;
-        this.ErrorVal = tVal;
+        this.astToken = token;
     }
 }

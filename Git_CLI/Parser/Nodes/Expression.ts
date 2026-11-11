@@ -1,9 +1,8 @@
-import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { TokenModel } from "../../Lexer/TokenModel.ts";
 import { ASTNode } from "./ASTNode.ts";
 export class Expression extends ASTNode{
-    public constructor(Line : number, Token : Tokens, 
-                       Problem : string)
+    public constructor(astToken : TokenModel)
     {
-        super(Line, Token, Problem);
+        super(astToken);
     }
 }

@@ -1,11 +1,10 @@
 import { Expression } from "./Expression.ts";
-import {Tokens } from "../../Lexer/LexerTokens.ts"
+import type { TokenModel } from "../../Lexer/TokenModel.ts";
 export class WordNode extends Expression{
     public raw : string;
-    public constructor(Content : string, line : number, 
-                       token : Tokens, problemStr : string)
+    public constructor(astToken : TokenModel, Content : string)
     {
-        super(line, token, problemStr);
+        super(astToken);
         this.raw = Content;
     }
 }

@@ -1,17 +1,17 @@
 import {Tokens} from "../../Lexer/LexerTokens.ts";
 import {Expression} from "./Expression.ts";
 import { ASTNode } from "./ASTNode.ts";
+import type { TokenModel } from "../../Lexer/TokenModel.ts";
 export class AssignmentNode extends ASTNode{
     public variableName : string;
-    public equalsToken : Tokens;
+    public AssignmentType : Tokens;
     public expression : Expression;
-    public constructor(Line : number , Token : Tokens, 
-                       Problem : string, VariableName: string,
-                       EqualsToken: Tokens, Expression: Expression)
+    public constructor(astToken : TokenModel, VariableName: string,
+                       AssignType: Tokens, Expression: Expression)
     {
-        super(Line, Token, Problem);
+        super(astToken);
         this.variableName = VariableName;
-        this.equalsToken = EqualsToken;
+        this.AssignmentType = AssignType;
         this.expression = Expression;
     }
 

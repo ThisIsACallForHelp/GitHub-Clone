@@ -1,12 +1,11 @@
-import { Tokens } from "../../Lexer/LexerTokens.ts";
+import type { TokenModel } from "../../Lexer/TokenModel.ts";
 import { Statement } from "./Statement.ts";
 
 export class CommandListNode extends Statement{
     public commands : Statement[];
-    public constructor(Line : number , Token : Tokens,
-                       Problem : string, Commands: Statement[])
+    public constructor(astToken : TokenModel, Commands: Statement[])
     {
-        super(Line, Token, Problem);
+        super(astToken);
         this.commands = Commands;
     }
 }

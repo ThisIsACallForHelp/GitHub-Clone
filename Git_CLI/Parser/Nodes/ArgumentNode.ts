@@ -1,13 +1,12 @@
-import { Tokens } from "../../Lexer/LexerTokens.ts";
+import { TokenModel } from "../../Lexer/TokenModel.ts";
 import { Expression } from "./Expression.ts";
 
 export class ArgumentNode extends Expression{
     
     public parts : Expression[];
-    public constructor(Line : number , Token : Tokens, 
-                       Problem : string,parts: Expression[])
+    public constructor(astToken : TokenModel,parts: Expression[])
     {
-        super(Line, Token, Problem);
+        super(astToken);
         this.parts = parts;
     }
 }

@@ -1,13 +1,12 @@
 
 import { CommandListNode } from "./CommandListNode.ts";
 import { ASTNode } from "./ASTNode.ts";
-import { Tokens } from "../../Lexer/LexerTokens.ts";
+import type { TokenModel } from "../../Lexer/TokenModel.ts";
 export class ProgramNode extends ASTNode{
     public code : CommandListNode;
-    public constructor(Line : number , Token : Tokens, 
-                       Problem : string, Code: CommandListNode)
+    public constructor(astToken : TokenModel, Code: CommandListNode)
     {
-        super(Line, Token, Problem);
+        super(astToken);
         this.code = Code;
     }
 }

@@ -28,36 +28,23 @@ export class Evaluator
     }
     public visitAssignmentNode(assignmentNode : AssignmentNode){
         let varName = assignmentNode.variableName;
-        let assigmentToken = assignmentNode.expression.Token;
+        let assigmentToken = assignmentNode.expression.astToken.TokenType;
         let expandedValue = this.expander.ExpandArgs([assignmentNode.expression]);
-        this.environment.setVariable(varName, expandedValue[0]!.ErrorVal);
+        this.environment.setVariable(varName, expandedValue[0]!);
         return 0;
     }     
     public visitLogicalExpression(node: LogicalExpressionNode){
-        let leftEvaluationCode = this.evaluate(node.left);
-        let rightEvaluationCode = this.evaluate(node.right);
-        if(node.operator === Tokens.AND){
-            if(leftEvaluationCode !== 0){
-                return false;
-            }
-            return leftEvaluationCode && rightEvaluationCode === 0;
-        }
-        if(node.operator === Tokens.OR){
-            if(leftEvaluationCode === 0){
-                return true;
-            }
-            return node.left || node.right;
-        }
+        const leftEvaluationCode = this.evaluate(node.left);
+        if(leftEvaluationCode !== 0 && node.operator === Tokens.AND) { return false;}
+        if(leftEvaluationCode === 0 && node.operator === Tokens.OR) { return leftEvaluationCode as number;}
+        const rightEvaluationCode = this.evaluate(node.right);
+        return rightEvaluationCode as number
     }  
     private visitSimpleCommandNode(node: SimpleCommandNode, captureOutput : boolean) 
     {
-        let stdioMode =  (captureOutput) ? 'pipe' : 'inherit';
-        let processArgs : string[] = [];
-        node.args.forEach(Arg => {
-            processArgs.push(...Arg.parts.map(parts => parts.ErrorVal))
-        })
-        //why the fuck would you pass objects instead of string cuh 
-        return spawnSync(node.commandName!.ErrorVal,processArgs,{stdio: stdioMode});
+        const stdioMode =  (captureOutput) ? 'pipe' : 'inherit';
+        let processArgs : string[] = node.args.flatMap(arg => this.expander.ExpandArgs(arg.parts));
+        return spawnSync(node.commandName!.astToken.TokenValue,processArgs,{stdio: stdioMode});
     }
     private visitPipelineNode(node: PipelineNode) 
     { 
@@ -67,7 +54,8 @@ export class Evaluator
             if(command instanceof SimpleCommandNode)
             {
                 const simple = command as SimpleCommandNode;
-                const res : any= spawnSync(simple.args, simple.args.map(arg => arg.parts), {input: temp});
+                const argStrings: string[] = simple.args.flatMap(arg => this.expander.ExpandArgs(arg.parts));
+                const res : any= spawnSync(simple.commandName!.astToken.TokenValue, argStrings, {input: temp});
                 temp = res.stdout;
             }
         }

@@ -77,15 +77,13 @@ export class Lexer{
         [":?", Tokens.ERROR_FALLBACK],
         ["))", Tokens.END_ARITHMETIC]
     ]);
-
+    private _lineNumber : number = 0;
+    private _charNumber : number = 0;
     public Text : string = ""; 
-    public _TextPosition : number = 0;
+    private _TextPosition : number = 0;
     public constructor(TokenText : string){
         this.Text = TokenText; //get the code
         this._TextPosition = 0;  //set the starting position 
-    }
-    private CanBeIgnored(IgnoredChar : string) : boolean{
-        return (IgnoredChar === ' ' || IgnoredChar === '\t' || IgnoredChar === '\n');
     }
     public Peek(Pos : number) : string{
         if(this._TextPosition + Pos >= this.Text.length){
@@ -98,6 +96,7 @@ export class Lexer{
             return '\0'; 
         }
         this._TextPosition += Offset; //increment the position by the offset 
+        this._charNumber += Offset;
         return this.Text[this._TextPosition]!; //return the next char and increment the position 
     }
 
@@ -118,108 +117,116 @@ export class Lexer{
     public GetNextToken() : TokenModel{
         let currentChar = this.Peek(0);
         let NextChar = this.Peek(1);
+        let tokenValue : string = "";
         if(this._TextPosition >= this.Text.length){
-            return new TokenModel(Tokens.EOF, "\0", this._TextPosition);
+            return new TokenModel(Tokens.EOF, "\0", this._charNumber, this._lineNumber);
         }
-
-        else if(this.CanBeIgnored(currentChar)){
-            while(currentChar !== '\0' && this.CanBeIgnored(currentChar)){
+        if(currentChar === '\n'){
+            this._charNumber = 0;
+            while(currentChar !== '\0' && currentChar === '\n'){
+                this._lineNumber++;
+                currentChar = this.MovePtr(1);
+            }
+            return this.GetNextToken();
+        }
+        else if(currentChar === ' '){
+            while(currentChar !== '\0' && currentChar === ' '){
+                this._charNumber++;
+                currentChar = this.MovePtr(1);
+            }
+            return this.GetNextToken();
+        }
+        else if(currentChar === '\t'){
+            while(currentChar !== '\0' && currentChar === '\t'){
                 currentChar = this.MovePtr(1);
             }
             return this.GetNextToken();
         }
 
         if(currentChar === '\0'){
-            return new TokenModel(Tokens.EOF, "\0", this._TextPosition);
+            return new TokenModel(Tokens.EOF, "\0", this._charNumber, this._lineNumber);
         }
         else if(currentChar === '#'){
-            const startPos : number = this._TextPosition;
-            let value : string = "";
+            const startPos : number = this._charNumber;
             let Curr : string = this.Peek(0);
             while(Curr !== '\0' && Curr !== '\n'){
-                value += this.MovePtr(1);
+                tokenValue += this.MovePtr(1);
                 Curr = this.Peek(0);
             }
-            return new TokenModel(Tokens.COMMENT, value, startPos);
+            return new TokenModel(Tokens.COMMENT, tokenValue, startPos, this._lineNumber);
         }
-
         else if(currentChar === '\''){
             this.MovePtr(1);
             const startPos = this._TextPosition;
-            let value = "";
             let CurrChar = this.Peek(0);
             while(CurrChar !== '\0' && CurrChar !== '\''){
-                value += this.MovePtr(1);
+                tokenValue += this.MovePtr(1);
                 CurrChar = this.Peek(0);
             }
             this.MovePtr(1); 
-            return new TokenModel(Tokens.STRING, value, startPos);
+            return new TokenModel(Tokens.STRING, tokenValue, startPos, this._lineNumber);
         }
-
-
         else if(this.CheckIfSymbol(currentChar)){
-            const startPos = this._TextPosition;
-            let SymbolCode : string = currentChar;
+            const startPos = this._charNumber;
+            tokenValue = currentChar;
             while(true){
                 const next = this.Peek(1);
                 if(next === '\0'){
                     break;
                 }
-                const tempSymbol = SymbolCode + next;
+                const tempSymbol = tokenValue + next;
                 if(Lexer.SymbolMap.has(tempSymbol)){
                     this.MovePtr(1);
-                    SymbolCode += next;
+                    tokenValue += next;
                 }
                 else{
                     break;
                 }
             }
-            return new TokenModel(Lexer.SymbolMap.get(SymbolCode) || Tokens.UNKNOWN_TOKEN, SymbolCode, startPos);
+            return new TokenModel(Lexer.SymbolMap.get(tokenValue) || Tokens.UNKNOWN_TOKEN,
+             tokenValue, startPos, this._lineNumber);
         }
-
         else if(this.CheckIfChar(currentChar)){
-            const startPos = this._TextPosition;
-            let Identifier : string = currentChar;
+            const startPos = this._charNumber;
+            tokenValue = currentChar;
             while(NextChar !== '\0' && (this.CheckIfChar(NextChar) || this.CheckIfNumber(NextChar))){
                 currentChar = this.MovePtr(1);
                 NextChar = this.Peek(1);
-                Identifier += currentChar;
+                tokenValue += currentChar;
             }
-            return new TokenModel(Lexer.KeywordMap.get(Identifier) || Tokens.WORD, Identifier, startPos);
+            return new TokenModel(Lexer.KeywordMap.get(tokenValue) || Tokens.WORD,
+             tokenValue, startPos, this._lineNumber);
         }
-
         else if(this.CheckIfNumber(currentChar)){
-            const startPos = this._TextPosition;
-            let NumberLiteral : string = currentChar;
+            const startPos = this._charNumber;
+            tokenValue = currentChar;
             while(NextChar !== '\0' && (this.CheckIfNumber(NextChar) || (NextChar === '.' && this.CheckIfNumber(this.Peek(2))))){
-                NumberLiteral += this.MovePtr(1);
+                tokenValue += this.MovePtr(1);
                 NextChar = this.Peek(1);
             }
-            return new TokenModel(Tokens.NUMBER, NumberLiteral, startPos);
+            return new TokenModel(Tokens.NUMBER, tokenValue, startPos, this._lineNumber);
         }
-
         else if(currentChar === '"'){
-            const startPos = this._TextPosition;
+            const startPos = this._charNumber;
             this.MovePtr(1);
-            let value = "";
             let ch = this.Peek(0);
             while(ch !== '\0' && ch !== '"'){
                 if(ch === '\\'){
                     this.MovePtr(1);
                     const esc = this.Peek(0);
                     if(esc === '\0') break;
-                    value += this.MovePtr(1);
+                    tokenValue += this.MovePtr(1);
                 } else {
-                    value += this.MovePtr(1);
+                    tokenValue += this.MovePtr(1);
                 }
                 ch = this.Peek(0);
             }
             if(this.Peek(0) === '"'){
                 this.MovePtr(1); 
-                return new TokenModel(Tokens.STRING, value, startPos);
+                return new TokenModel(Tokens.STRING, tokenValue, startPos, this._lineNumber);
             }
-            return new TokenModel(Tokens.UNKNOWN_TOKEN, value, startPos);
+            return new TokenModel(Tokens.UNKNOWN_TOKEN, tokenValue, startPos, this._lineNumber);
         }
-        return new TokenModel(Tokens.UNKNOWN_TOKEN, "\0", this._TextPosition);    
+        return new TokenModel(Tokens.UNKNOWN_TOKEN, "\0", this._charNumber, this._lineNumber);    
     }
 }

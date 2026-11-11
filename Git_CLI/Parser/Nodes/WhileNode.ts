@@ -1,17 +1,14 @@
 import { Statement } from "./Statement.ts";
 import {Expression} from "./Expression.ts";
-import { Tokens} from "../../Lexer/LexerTokens.ts";
 import { CommandListNode } from "./CommandListNode.ts";
+import type { TokenModel } from "../../Lexer/TokenModel.ts";
 export class WhileNode extends Statement{
-    public whileToken : Tokens;
     public condition : Expression | null;
     public loopBody : CommandListNode | null;
-    public constructor(Line : number , Token : Tokens, 
-                       Problem : string, WhileToken: Tokens, 
+    public constructor(astToken : TokenModel, 
                        Condition: Expression | null, LoopBody: CommandListNode | null)
     {
-        super(Line, Token, Problem);
-        this.whileToken = WhileToken;
+        super(astToken);
         this.condition = Condition;
         this.loopBody = LoopBody;
     }

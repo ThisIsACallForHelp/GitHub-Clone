@@ -9,6 +9,7 @@ import * as fs from "node:fs"
 import { WordNode } from '../Parser/Nodes/WordNode.ts';
 import { Evaluator } from '../Evaluator/Eval.ts';
 import { CommandSubNode } from '../Parser/Nodes/CommandSubNode.ts';
+import { TokenModel } from '../Lexer/TokenModel.ts';
 
 export class Expander
 {
@@ -118,9 +119,10 @@ export class Expander
             const currToken = parts[i];
             if(currToken instanceof ArithmeticNode){
                 let rawString = currToken.innerExp;
-                let calculatedNum = this.MathEvaluator(rawString.ErrorVal);
+                let calculatedNum = this.MathEvaluator(rawString.astToken.TokenValue);
                 let calculated = calculatedNum.toString();
-                parts[i] = new Expression(parts[i]!.lineNumber, Tokens.NUMBER, calculated);
+                parts[i] = new Expression(new TokenModel(Tokens.NUMBER, calculated,
+                     parts[i]?.astToken.StartingPosition, parts[i]?.astToken.tokenLine!));
             }
         }
         return parts;
@@ -135,12 +137,13 @@ export class Expander
         let escapedIFS = IFS.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         for(let i = 0; i < words.length; i++){
             const currWord = words[i];
-            if(currWord instanceof WordNode && currWord.Token === Tokens.EXPANDED_WORD){
+            if(currWord instanceof WordNode && currWord.astToken.TokenType === Tokens.EXPANDED_WORD){
                 let rawString = currWord.raw;
                 let splitStrings : string[] = rawString!.split(new RegExp(`[${escapedIFS}]`));
                 for(let split of splitStrings){
                     if(split){
-                        splitTokenArray.push(new WordNode(split, currWord.lineNumber, Tokens.WORD, ""));
+                        splitTokenArray.push(new WordNode(new TokenModel(Tokens.WORD, split,
+                        currWord.astToken.StartingPosition ,currWord.astToken.tokenLine), ""));
                     }
                 }
             } else {
@@ -212,7 +215,8 @@ export class Expander
             ){
                 let varName = currToken.name; 
                 let variableValue = this.env.getVariable(varName)?.value || "";
-                expandedVars.push(new WordNode(variableValue, currToken.lineNumber, Tokens.EXPANDED_WORD, ""));
+                expandedVars.push(new WordNode(new TokenModel(Tokens.EXPANDED_WORD,variableValue,
+                    currToken.astToken.StartingPosition,currToken.astToken.tokenLine), ""));
             }
             else{                                     
                 expandedVars.push(currToken!);
@@ -231,7 +235,8 @@ export class Expander
         }
         let homePath = this.env.getVariable("HOME")?.value || DEFAULT_HOME_PATH;
         let expandedPath = rawString.replace("~", homePath) || homePath;
-        parts[0] = new WordNode(expandedPath, parts[0]!.lineNumber, Tokens.EXPANDED_TILDE, "");
+        parts[0] = new WordNode(new TokenModel(Tokens.EXPANDED_TILDE, expandedPath,
+            parts[0]?.astToken.StartingPosition,parts[0]!.astToken.tokenLine), "");
         return parts;
     }
     public ExpandArgs(args : Expression[]){
@@ -247,7 +252,7 @@ export class Expander
                 rawStrings.push(rawWord.raw);
            } 
            else if(rawWord instanceof Expression){
-                rawStrings.push(rawWord.ErrorVal);
+                rawStrings.push(rawWord.astToken.TokenValue);
            } 
            else{
             rawStrings.push(Word.toString());
@@ -264,7 +269,8 @@ export class Expander
                 let captureResponse = true;
                 let evaluatedCommand = this.evaluator.evaluate(part.inner, captureResponse);
                 let Trimmed = evaluatedCommand?.toString().split('\n').join(' ');
-                expandedCommands.push(new WordNode(Trimmed!, part.lineNumber, Tokens.WORD, ""));
+                expandedCommands.push(new WordNode(new TokenModel(Tokens.WORD,Trimmed!,
+                    part.astToken.StartingPosition, part.astToken.tokenLine), ""));
             }
             else{
                 expandedCommands.push(part);

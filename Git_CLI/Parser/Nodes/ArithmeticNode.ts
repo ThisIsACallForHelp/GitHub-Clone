@@ -1,13 +1,11 @@
-import { Tokens } from "../../Lexer/LexerTokens.ts";
-import { ASTNode } from "./ASTNode.ts";
+import type { TokenModel } from "../../Lexer/TokenModel.ts";
 import {Expression} from "./Expression.ts";
 
 export class ArithmeticNode extends Expression{
     innerExp: Expression;
-    public constructor(Line : number , Token : Tokens,
-                       Problem : string, innerExp: Expression)
+    public constructor(astToken : TokenModel, innerExp: Expression)
     {
-        super(Line, Token, Problem);
+        super(astToken);
         this.innerExp = innerExp;
     }
 

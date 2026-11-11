@@ -1,14 +1,14 @@
+import { TokenModel } from "../../Lexer/TokenModel.ts";
+import { Tokens } from "../../Lexer/LexerTokens.ts";
 import {Expression} from "./Expression.ts";
-import {Tokens} from "../../Lexer/LexerTokens.ts"
 export class LogicalExpressionNode extends Expression{
     public left : Expression;
     public right : Expression;
     public operator : Tokens;
-    public constructor(Line : number , Token : Tokens, 
-                       Problem : string, left: Expression, 
+    public constructor(astToken : TokenModel, left: Expression, 
                        right: Expression, operator: Tokens)
     {
-        super(Line, Token, Problem);
+        super(astToken);
         this.left = left;
         this.right = right;
         this.operator = operator;

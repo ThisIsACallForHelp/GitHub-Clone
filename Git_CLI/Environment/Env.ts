@@ -7,7 +7,6 @@ interface ShellVariable{
 };
 export class Environment {
     public scopeFrame : Map<string, ShellVariable>;
-    // A private Map to hold variable names and their string values
     public scopeStack : Array<Map<string,ShellVariable>>;
     public constructor(){
         this.scopeFrame = new Map();
@@ -21,7 +20,6 @@ export class Environment {
         this.scopeFrame.set("$$", {value: process.pid.toString(), isExported: true, isLocal: false, isReadonly: false});
         this.scopeFrame.set("0", {value: "Git_Cli", isExported: false, isLocal: false, isReadonly: false});
     }
-    // A method for the Expander to ask: "What does this variable equal?"
     public getVariable(name: string): ShellVariable | undefined {
         for(let i = this.scopeStack.length - 1; i>=0; i--){
             if(this.scopeStack[i]!.has(name)){
@@ -30,7 +28,6 @@ export class Environment {
         }
         return undefined;
     }
-    // A method to save new variables (like when a user types: X=10)
     public setVariable(name: string, value: string, attributes? : Partial<ShellVariable>): void {
         const existingVar = this.getVariable(name);
         const newVar: ShellVariable = {
