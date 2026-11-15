@@ -1,11 +1,10 @@
-import { Expression } from "./Expression";
-import { Tokens } from "../../Lexer/LexerTokens";
+import type { TokenModel } from "../../Lexer/TokenModel.ts";
+import { Expression } from "./Expression.ts";
 export class StringNode extends Expression{
     public content : string;
-    public constructor(Content : string, line : number, 
-                       token : Tokens, problemStr : string)
+    public constructor(astToken : TokenModel, Content : string)
     {
-        super(line, token, problemStr);
+        super(astToken);
         this.content = Content;
     }
 }
