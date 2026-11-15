@@ -1,3 +1,4 @@
+import type { CommandListNode } from "../Parser/Nodes/CommandListNode.ts";
 
 interface ShellVariable{
     value: string,
@@ -6,12 +7,13 @@ interface ShellVariable{
     isLocal : boolean
 };
 export class Environment {
+    private funcTable : Map<string, CommandListNode>;
     public scopeFrame : Map<string, ShellVariable>;
     public scopeStack : Array<Map<string,ShellVariable>>;
     public constructor(){
         this.scopeFrame = new Map();
         this.scopeStack = new Array(this.scopeFrame);
-
+        this.funcTable = new Map();
         for(let [key, value] of Object.entries(process.env)){
             if(value !== undefined){
                 this.scopeFrame.set(key, {value, isExported: true, isLocal: false, isReadonly: false})
@@ -19,6 +21,14 @@ export class Environment {
         }
         this.scopeFrame.set("$$", {value: process.pid.toString(), isExported: true, isLocal: false, isReadonly: false});
         this.scopeFrame.set("0", {value: "Git_Cli", isExported: false, isLocal: false, isReadonly: false});
+    }
+
+    public pushFunction(name: string, commands: CommandListNode) : void{
+        this.funcTable.set(name, commands);
+    }
+
+    public getFunction(name : string) : CommandListNode | undefined{
+        return this.funcTable.get(name);
     }
     public getVariable(name: string): ShellVariable | undefined {
         for(let i = this.scopeStack.length - 1; i>=0; i--){
