@@ -92,7 +92,12 @@ export class Evaluator
             }
         }
         try{
-            return spawnSync(node.commandName!.astToken.TokenValue,processArgs,{stdio: [stdin, stdout, stderr]});
+            return spawnSync(node.commandName!.astToken.TokenValue,processArgs,
+                            {
+                                stdio: [stdin, stdout, stderr],
+                                shell: true,
+                                timeout: 10000
+                            });
         }
         finally{
             for(let f of pushedFiles){
